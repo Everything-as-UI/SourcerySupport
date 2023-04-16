@@ -1,0 +1,32 @@
+{
+  "pins" : [
+    {
+      "identity" : "coreui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Everything-as-UI/CoreUI.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "8bb66a265ba11bdc84c38bd30db88784912d7c58"
+      }
+    },
+    {
+      "identity" : "documentui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Everything-as-UI/DocumentUI.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "46c565d298943338909dd665e596b368af87f82c"
+      }
+    },
+    {
+      "identity" : "swiftlangui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Everything-as-UI/SwiftLangUI.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "cfb78e91f6f7d4108ec02d0178a5faf0e4f5f8b8"
+      }
+    }
+  ],
+  "version" : 2
+}

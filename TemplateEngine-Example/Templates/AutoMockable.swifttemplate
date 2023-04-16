@@ -1,0 +1,4 @@
+
+<%_ import TemplateKit _%>
+
+<%= render(with: context, imports: ["@testable import TemplateEngine_Example"]) %>
