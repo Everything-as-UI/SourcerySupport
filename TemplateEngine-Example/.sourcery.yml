@@ -1,0 +1,8 @@
+sources:
+  - Sources
+output:
+  Tests/TemplateEngine-ExampleTests/Mocks
+templates:
+  - Templates
+cacheBasePath:
+  ../SourceryTemplateEngine/SwiftTemplate/2.0.2/.cache

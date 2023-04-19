@@ -11,21 +11,26 @@ import SwiftLangUI
 import SourceryRuntime
 
 public func render(with context: TemplateContext, imports: [String]) -> String {
-    guard let decl = context.types.protocols.first else { return "" }
-    return "\(Mock(decl: decl, imports: imports))"
+    "\(_render(with: context, imports: imports))"
 }
 
+@TextDocumentBuilder
+func _render(with context: TemplateContext, imports: [String]) -> some TextDocument {
+    let types = context.types.protocols.lazy.filter { $0.annotations["AutoMockable"] != nil }
+    Joined(separator: String.newline, elements: imports).endingWithNewline(2)
+    ForEach(types, separator: .newline + .newline) {
+        Mock(decl: $0)
+    }
+}
 
 struct Mock: TextDocument {
     let decl: SourceryProtocol
-    let imports: [String]
 
     var modifiers: [Keyword] {
         decl.modifiers.map(\.name).compactMap(Keyword.init(rawValue:))
     }
 
     var textBody: some TextDocument {
-        Joined(separator: String.newline, elements: imports).endingWithNewline(2)
         Mark(name: decl.name + "Mock").endingWithNewline(2)
         DeclWithBody(decl: TypeDecl(name: decl.name + "Mock", modifiers: modifiers + [.final, .class], inherits: [decl.name])) {
             ForEach(decl.methods, separator: .newline) { fun in
@@ -149,13 +154,6 @@ extension SourceryRuntime.Method: TextDocument {
 }
 
 extension ClosureDecl {
-    var nonClosureArgsTuple: some TextDocument {
-        let args = args.lazy.filter {
-            $0.type.range(of: String.arrow) == nil
-        }
-        return ForEach(args, separator: .commaSpace, content: { $0.name })
-    }
-
     var nonClosureArgsTupleDecl: some TextDocument {
         let args = args.lazy.filter {
             $0.type.range(of: String.arrow) == nil
@@ -166,19 +164,6 @@ extension ClosureDecl {
             } else {
                 args.first.map(\.type)
             }
-        }
-    }
-
-    var closureArgs: [(name: String, closure: ClosureDecl)] {
-        args.compactMap { arg -> (String, ClosureDecl)? in
-            let parts = arg.type.components(separatedBy: "->")
-            guard parts.count > 1 else { return nil }
-            let closureArgs = parts[0].trimmingCharacters(in: .whitespaces.union(CharacterSet(charactersIn: "()")))
-                .components(separatedBy: ",")
-                .map({ $0.trimmingCharacters(in: .whitespaces) })
-                .compactMap({ $0.isEmpty ? nil : Arg(type: $0) })
-            let result = parts[1].trimmingCharacters(in: .whitespaces)
-            return (arg.name, ClosureDecl(args: closureArgs, result: result))
         }
     }
 }
